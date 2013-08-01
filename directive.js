@@ -86,11 +86,17 @@ angular.module('rorymadden.date-dropdowns', [])
       }
     },
     template:
-      '<div>' +
-      '  <select name="dateFields.day" data-ng-model="dateFields.day" class="span1" ng-options="day for day in days" ng-change="checkDate()" ng-disabled="disableFields"></select>' +
-      '  <select name="dateFields.month" data-ng-model="dateFields.month" class="span2" ng-options="month.value as month.name for month in months" value="{{dateField.month}}" ng-change="checkDate()" ng-disabled="disableFields"></select>' +
-      '  <select name="dateFields.year" data-ng-model="dateFields.year" class="span1" ng-options="year for year in years" ng-change="checkDate()" ng-disabled="disableFields"></select>' +
-      '</div>',
+    '<div>' +
+    '  <div class="col-3 col-sm-2 col-lg-2 noLeftPadding">' +
+    '    <select name="dateFields.day" data-ng-model="dateFields.day" class="form-control" ng-options="day for day in days" ng-change="checkDate()" ng-disabled="disableFields"></select>' +
+    '  </div>' +
+    '  <div class="col-5 col-sm-6 col-lg-4">' +
+    '    <select name="dateFields.month" data-ng-model="dateFields.month" class="form-control" ng-options="month.value as month.name for month in months" value="{{dateField.month}}" ng-change="checkDate()" ng-disabled="disableFields"></select>' +
+    '  </div>' +
+    '  <div class="col-4 col-sm-4 col-lg-3">' +
+    '    <select name="dateFields.year" data-ng-model="dateFields.year" class="form-control" ng-options="year for year in years" ng-change="checkDate()" ng-disabled="disableFields"></select>' +
+    '  </div>' +
+    '</div>',
     link: function(scope, element, attrs, ctrl){
       scope.$parent.$watch(attrs.ngDisabled, function(newVal){
         scope.disableFields = newVal;

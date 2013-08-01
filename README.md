@@ -2,6 +2,11 @@
 
 Date dropdown fields for angular. Main use case is for entering date of birth.
 
+Styling is done using Bootstrap v3. There is a noLeftPadding option for the first element if you are trying to align your elements. You would need to add the following to your styles:
+.noleftPadding {
+  padding-left: 0;
+}
+
 Creates three dropdown fields - Day, Month and Year.
 
 1. Day contains options 1 - 31
