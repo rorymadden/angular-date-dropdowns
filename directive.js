@@ -12,6 +12,8 @@ angular.module('rorymadden.date-dropdowns', [])
       model: '=ngModel'
     },
     controller: function($scope) {
+
+
       // set up arrays of values
       $scope.days = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31];
       $scope.months = [
@@ -28,12 +30,7 @@ angular.module('rorymadden.date-dropdowns', [])
         { value: 10, name: 'November' },
         { value: 11, name: 'December' }
       ];
-      var currentYear = new Date().getFullYear();
-      var oldestYear = currentYear - 100;
-      $scope.years = [];
-      for(var i = currentYear; i >= oldestYear; i-- ){
-        $scope.years.push(i);
-      }
+
       // split the current date into sections
       $scope.dateFields = {};
 
@@ -98,22 +95,72 @@ angular.module('rorymadden.date-dropdowns', [])
     '  </div>' +
     '</div>',
     link: function(scope, element, attrs, ctrl){
+      // allow overwriting of the
+      if(attrs.dayDivClass){
+        angular.element(element[0].children[0]).removeClass('col-3 col-sm-2 col-lg-2 noLeftPadding');
+        angular.element(element[0].children[0]).addClass(attrs.dayDivClass);
+      }
+      if(attrs.dayClass){
+        angular.element(element[0].children[0].children[0]).removeClass('form-control');
+        angular.element(element[0].children[0].children[0]).addClass(attrs.dayClass);
+      }
+      if(attrs.monthDivClass){
+        angular.element(element[0].children[1]).removeClass('col-5 col-sm-6 col-lg-4');
+        angular.element(element[0].children[1]).addClass(attrs.monthDivClass);
+      }
+      if(attrs.monthClass){
+        angular.element(element[0].children[1].children[0]).removeClass('form-control');
+        angular.element(element[0].children[1].children[0]).addClass(attrs.monthClass);
+      }
+      if(attrs.yearDivClass){
+        angular.element(element[0].children[2]).removeClass('col-4 col-sm-4 col-lg-3');
+        angular.element(element[0].children[2]).addClass(attrs.yearDivClass);
+      }
+      if(attrs.yearClass){
+        angular.element(element[0].children[2].children[0]).removeClass('form-control');
+        angular.element(element[0].children[2].children[0]).addClass(attrs.yearClass);
+      }
+
+      // set the years drop down from attributes or defaults
+      var currentYear = parseInt(attrs.startingYear,10) || new Date().getFullYear();
+      var numYears = parseInt(attrs.numYears,10) || 100;
+      var oldestYear = currentYear - numYears;
+
+      scope.years = [];
+      for(var i = currentYear; i >= oldestYear; i-- ){
+        scope.years.push(i);
+      }
+
+      // pass down the ng-disabled property
       scope.$parent.$watch(attrs.ngDisabled, function(newVal){
         scope.disableFields = newVal;
       });
 
-      // TODO: Need to set form as invalid if only one or two fields populated
-      // ctrl.$parsers.unshift(function(value) {
-      //   console.log('called');
 
-      //   // test and set the validity after update.
-      //   var valid = (scope.dateFields.day && scope.dateFields.month && scope.dateFields.year);
-      //   ctrl.$setValidity('dateFields', valid);
+      var validator = function(){
+        var valid = true;
+        if(isNaN(scope.dateFields.day) && isNaN(scope.dateFields.month) && isNaN(scope.dateFields.year)){
+          valid = true;
+        }
+        else if(!isNaN(scope.dateFields.day) && !isNaN(scope.dateFields.month) && !isNaN(scope.dateFields.year)){
+          valid = true;
+        }
+        else valid = false;
 
-      //   // if it's valid, return the value to the model,
-      //   // otherwise return undefined.
-      //   return valid ? value : undefined;
-      // });
+        ctrl.$setValidity('rsmdatedropdowns', valid);
+      };
+
+      scope.$watch('dateFields.day', function(){
+        validator();
+      });
+
+      scope.$watch('dateFields.month', function(){
+        validator();
+      });
+
+      scope.$watch('dateFields.year', function(){
+        validator();
+      });
     }
   };
 }]);
