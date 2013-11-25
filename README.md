@@ -12,14 +12,15 @@ If you want to change the years tehre are two attributes available:
 * starting-year
 * num-years
 
-Styling is done using Bootstrap v3. There is a noLeftPadding class added to the first element if you are trying to align your elements. You would need to add the following to your styles:
+Styling is done using Bootstrap3. There is a noPadding class added to the elements if you are trying to align your elements. You would need to add the following to your styles:
 ```css
-.noleftPadding {
+.noPadding {
   padding-left: 0;
+  padding-right: 0;
 }
 ```
 
-If you want to change the classes there are teh following attributes available:
+If you want to change the classes there are the following attributes available:
 * day-div-class
 * day-class
 * month-div-class

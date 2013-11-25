@@ -8,6 +8,6 @@
     "components"
   ],
   "dependencies": {
-    "angular": "~1.0.7"
+    "angular": "~1.2.1"
   }
 }
