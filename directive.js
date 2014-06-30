@@ -55,7 +55,7 @@ angular.module('rorymadden.date-dropdowns', [])
       }
       else {
         // change the date on the scope and try again if invalid
-        this.checkDate(changeDate(date));
+        return this.checkDate(changeDate(date));
       }
     },
     get: function(name) {
@@ -73,8 +73,6 @@ angular.module('rorymadden.date-dropdowns', [])
       model: '=ngModel'
     },
     controller: ['$scope', 'rsmdateutils', function ($scope, rsmDateUtils) {
-
-
       // set up arrays of values
       $scope.days = rsmDateUtils.get('days');
       $scope.months = rsmDateUtils.get('months');
@@ -101,20 +99,24 @@ angular.module('rorymadden.date-dropdowns', [])
     }],
     template:
     '<div class="form-inline">' +
-    '  <div class="form-group col-xs-3 col-sm-3 col-md-3 col-lg-3 noPadding">' +
+    '  <div class="form-group col-xs-3">' +
     '    <select name="dateFields.day" data-ng-model="dateFields.day" placeholder="Day" class="form-control" ng-options="day for day in days" ng-change="checkDate()" ng-disabled="disableFields"></select>' +
     '  </div>' +
-    '  <div class="form-group col-xs-5 col-sm-5 col-md-5 col-lg-5 noPadding">' +
+    '  <div class="form-group col-xs-5">' +
     '    <select name="dateFields.month" data-ng-model="dateFields.month" placeholder="Month" class="form-control" ng-options="month.value as month.name for month in months" value="{{dateField.month}}" ng-change="checkDate()" ng-disabled="disableFields"></select>' +
     '  </div>' +
-    '  <div class="form-group col-xs-4 col-sm-4 col-md-4 col-lg-4 noPadding">' +
-    '    <select name="dateFields.year" data-ng-model="dateFields.year" placeholder="Year" class="form-control" ng-options="year for year in years" ng-change="checkDate()" ng-disabled="disableFields"></select>' +
+    '  <div class="form-group col-xs-4">' +
+    '    <select ng-if="!yearText" name="dateFields.year" data-ng-model="dateFields.year" placeholder="Year" class="form-control" ng-options="year for year in years" ng-change="checkDate()" ng-disabled="disableFields"></select>' +
+    '    <input ng-if="yearText" type="text" name="dateFields.year" data-ng-model="dateFields.year" placeholder="Year" class="form-control" ng-disabled="disableFields">' +
     '  </div>' +
     '</div>',
     link: function(scope, element, attrs, ctrl){
+      if(attrs.yearText) {
+        scope.yearText = true;
+      }
       // allow overwriting of the
       if(attrs.dayDivClass){
-        angular.element(element[0].children[0]).removeClass('col-3 col-sm-2 col-lg-2 noLeftPadding');
+        angular.element(element[0].children[0]).removeClass('form-group col-xs-3');
         angular.element(element[0].children[0]).addClass(attrs.dayDivClass);
       }
       if(attrs.dayClass){
@@ -122,7 +124,7 @@ angular.module('rorymadden.date-dropdowns', [])
         angular.element(element[0].children[0].children[0]).addClass(attrs.dayClass);
       }
       if(attrs.monthDivClass){
-        angular.element(element[0].children[1]).removeClass('col-5 col-sm-6 col-lg-4');
+        angular.element(element[0].children[1]).removeClass('form-group col-xs-5');
         angular.element(element[0].children[1]).addClass(attrs.monthDivClass);
       }
       if(attrs.monthClass){
@@ -130,7 +132,7 @@ angular.module('rorymadden.date-dropdowns', [])
         angular.element(element[0].children[1].children[0]).addClass(attrs.monthClass);
       }
       if(attrs.yearDivClass){
-        angular.element(element[0].children[2]).removeClass('col-4 col-sm-4 col-lg-3');
+        angular.element(element[0].children[2]).removeClass('form-group col-xs-4');
         angular.element(element[0].children[2]).addClass(attrs.yearDivClass);
       }
       if(attrs.yearClass){
@@ -153,31 +155,46 @@ angular.module('rorymadden.date-dropdowns', [])
         scope.disableFields = newVal;
       });
 
-
-      var validator = function(){
-        var valid = true;
-        if(isNaN(scope.dateFields.day) && isNaN(scope.dateFields.month) && isNaN(scope.dateFields.year)){
-          valid = true;
-        }
-        else if(!isNaN(scope.dateFields.day) && !isNaN(scope.dateFields.month) && !isNaN(scope.dateFields.year)){
-          valid = true;
-        }
-        else valid = false;
-
-        ctrl.$setValidity('rsmdatedropdowns', valid);
-      };
-
-      scope.$watch('dateFields.day', function(){
-        validator();
+      // ensure that fields are entered
+      var required = attrs.required.split(' ');
+      ctrl.$parsers.push(function(value) {
+        angular.forEach(required, function (elem) {
+          if(!angular.isNumber(elem)) {
+            ctrl.$setValidity('required', false);
+          }
+        });
+        ctrl.$setValidity('required', true);
       });
+      // var validator = function(){
+      //   var valid = true;
+      //   // all fields entered
+      //   angular.forEach(required, function (elem) {
+      //     if(!angular.isNumber(elem)) {
+      //       valid = false;
+      //     }
+      //   });
+      //   // if(isNaN(scope.dateFields.day) && isNaN(scope.dateFields.month) && isNaN(scope.dateFields.year)){
+      //   //   valid = true;
+      //   // }
+      //   // else if(!isNaN(scope.dateFields.day) && !isNaN(scope.dateFields.month) && !isNaN(scope.dateFields.year)){
+      //   //   valid = true;
+      //   // }
+      //   // else valid = false;
 
-      scope.$watch('dateFields.month', function(){
-        validator();
-      });
+      //   ctrl.$setValidity('rsmdatedropdowns', valid);
+      // };
 
-      scope.$watch('dateFields.year', function(){
-        validator();
-      });
+      // scope.$watch('dateFields.day', function(){
+      //   validator();
+      // });
+
+      // scope.$watch('dateFields.month', function(){
+      //   validator();
+      // });
+
+      // scope.$watch('dateFields.year', function(){
+      //   validator();
+      // });
     }
   };
 }]);
