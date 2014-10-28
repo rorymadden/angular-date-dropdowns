@@ -151,9 +151,11 @@ angular.module('rorymadden.date-dropdowns', [])
       }
 
       // pass down the ng-disabled property
-      scope.$parent.$watch(attrs.ngDisabled, function(newVal){
-        scope.disableFields = newVal;
-      });
+      if(attrs.ngDisabled) {
+        scope.$parent.$watch(attrs.ngDisabled, function(newVal){
+          scope.disableFields = newVal;
+        });
+      }
 
       // ensure that fields are entered
       var required = attrs.required.split(' ');
