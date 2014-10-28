@@ -41,7 +41,7 @@ If a user enters an incorrect date (e.g. 30 February) the date will be automatic
 ### Code
 
 ```html
-   <input rmsdatedropdowns ng-model="model" ng-disabled="test()">
+   <input rsmdatedropdowns ng-model="model" ng-disabled="test()">
 ```
 ![alt text](http://i43.tinypic.com/2vuk8ax.png "Dropdowns")
 
