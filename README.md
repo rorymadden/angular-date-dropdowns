@@ -8,7 +8,7 @@ Creates three dropdown fields - Day, Month and Year.
 2. Month contains options January - December
 3. Year contains the last 100 years
 
-If you want to change the years tehre are two attributes available:
+If you want to change the years there are two attributes available:
 * starting-year
 * num-years
 
