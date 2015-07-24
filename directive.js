@@ -35,7 +35,7 @@
     return {
       checkDate: function (date) {
         var d;
-        if (!date.day || !date.month || !date.year) return false;
+        if (!date.day || !(date.month === 0 || date.month) || !date.year) return false;
 
         d = new Date(Date.UTC(date.year, date.month, date.day));
 
@@ -61,7 +61,7 @@
             value: i,
             name: months[i]
           });
-					i++;
+          i++;
         }
         return lst;
       }())
