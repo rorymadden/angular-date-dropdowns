@@ -40,7 +40,7 @@
         d = new Date(Date.UTC(date.year, date.month, date.day));
 
         if (d && (d.getMonth() === date.month && d.getDate() === Number(date.day))) {
-          return d;
+          return date;
         }
 
         return this.checkDate(changeDate(date));
@@ -54,13 +54,14 @@
       }()),
       months: (function () {
         var lst = [],
-            mLen = months.length;
+            i = 0;
 
-        while (mLen--) {
+        while (i < months.length) {
           lst.push({
-            value: mLen,
-            name: months[mLen]
+            value: i,
+            name: months[i]
           });
+					i++;
         }
         return lst;
       }())
@@ -91,6 +92,8 @@
           var date = rsmDateUtils.checkDate($scope.dateFields);
           if (date) {
             $scope.dateFields = date;
+            // Update the original model
+            $scope.model = new Date(Date.UTC(date.year, date.month, date.day));
           }
         };
       }],
@@ -108,7 +111,7 @@
       '  </div>' +
       '</div>',
       link: function (scope, element, attrs, ctrl) {
-        var currentYear = parseInt(attrs.startingYear, 10) || new Date().getFullYear(),
+        var currentYear = parseInt(attrs.startingYear, 10) || parseInt(eval(attrs.startingYear), 10) || new Date().getFullYear(), // Add eval() test to allow for calculated dates
             numYears = parseInt(attrs.numYears,10) || 100,
             oldestYear = currentYear - numYears,
             overridable = [
