@@ -90,7 +90,7 @@
         $scope.checkDate = function () {
           var date = rsmDateUtils.checkDate($scope.dateFields);
           if (date) {
-            $scope.dateFields = date;
+            $scope.model = date;
           }
         };
       }],
