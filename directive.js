@@ -35,10 +35,10 @@
     return {
       checkDate: function (date) {
         var d;
-        if (!date.day || !date.month || !date.year) return false;
+        if (!date.day || date.month === null || date.month === undefined || !date.year) return false;
 
         d = new Date(Date.UTC(date.year, date.month, date.day));
-
+        
         if (d && (d.getMonth() === date.month && d.getDate() === Number(date.day))) {
           return d;
         }
@@ -56,10 +56,10 @@
         var lst = [],
             mLen = months.length;
 
-        while (mLen--) {
+        for (var i = 0; i < mLen; i++) {
           lst.push({
-            value: mLen,
-            name: months[mLen]
+            value: i,
+            name: months[i]
           });
         }
         return lst;
@@ -81,23 +81,30 @@
 
         $scope.dateFields = {};
 
+        $scope.dateFields.day = new Date($scope.model).getUTCDate();
+        $scope.dateFields.month = new Date($scope.model).getUTCMonth();
+        $scope.dateFields.year = new Date($scope.model).getUTCFullYear();
+
+        // Initialize with current date (if set)
         $scope.$watch('model', function (newDate) {
-          $scope.dateFields.day = new Date(newDate).getUTCDate();
-          $scope.dateFields.month = new Date(newDate).getUTCMonth();
-          $scope.dateFields.year = new Date(newDate).getUTCFullYear();
+          if(newDate) {
+            $scope.dateFields.day = new Date(newDate).getUTCDate();
+            $scope.dateFields.month = new Date(newDate).getUTCMonth();
+            $scope.dateFields.year = new Date(newDate).getUTCFullYear();
+          }
         });
 
         $scope.checkDate = function () {
           var date = rsmDateUtils.checkDate($scope.dateFields);
           if (date) {
-            $scope.dateFields = date;
+            $scope.model = date;
           }
         };
       }],
       template:
       '<div class="form-inline">' +
       '  <div class="form-group col-xs-3">' +
-      '    <select name="dateFields.day" data-ng-model="dateFields.day" placeholder="Day" class="form-control" ng-options="day for day in days" ng-change="checkDate()" ng-disabled="disableFields"></select>' +
+      '     <select name="dateFields.day" data-ng-model="dateFields.day" placeholder="Day" class="form-control" ng-options="day for day in days" ng-change="checkDate()" ng-disabled="disableFields"></select>' +
       '  </div>' +
       '  <div class="form-group col-xs-5">' +
       '    <select name="dateFields.month" data-ng-model="dateFields.month" placeholder="Month" class="form-control" ng-options="month.value as month.name for month in months" value="{{ dateField.month }}" ng-change="checkDate()" ng-disabled="disableFields"></select>' +
