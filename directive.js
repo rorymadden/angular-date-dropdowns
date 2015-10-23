@@ -37,7 +37,7 @@
         var d;
         if (!date.day || date.month === null || date.month === undefined || !date.year) return false;
 
-        d = new Date(Date.UTC(date.year, date.month, date.day));
+        d = new Date(date.year, date.month, date.day);
         
         if (d && (d.getMonth() === date.month && d.getDate() === Number(date.day))) {
           return d;
