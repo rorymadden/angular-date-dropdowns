@@ -39,7 +39,7 @@
         if (!date.day || date.month === null || date.month === undefined || !date.year) return false;
 
         d = new Date(Date.UTC(date.year, date.month, date.day));
-        
+
         if (d && (d.getMonth() === date.month && d.getDate() === Number(date.day))) {
           return d;
         }
@@ -119,15 +119,21 @@
         };
       }],
       template:
-      '<div class="form-inline">' +
-      '  <div class="form-group col-xs-3">' +
-      '     <select name="dateFields.day" data-ng-model="dateFields.day" placeholder="Day" class="form-control" ng-options="day for day in days" ng-change="checkDate()" ng-disabled="disableFields"></select>' +
+      '<div class="_dtr">' +
+      '  <div class="_dtc select-month">' +
+      '   <select name="dateFields.month" data-ng-model="dateFields.month" placeholder="Month" class="form-control" ng-options="month.value as month.name for month in months" value="{{ dateField.month }}" ng-change="checkDate(); checkMonth()" ng-disabled="disableFields">' +
+      '     <option value="" disabled selected>-month-</option>' +
+      '   </select>' +
       '  </div>' +
-      '  <div class="form-group col-xs-5">' +
-      '    <select name="dateFields.month" data-ng-model="dateFields.month" placeholder="Month" class="form-control" ng-options="month.value as month.name for month in months" value="{{ dateField.month }}" ng-change="checkDate(); checkMonth()" ng-disabled="disableFields"></select>' +
+      '  <div class="_dtc select-day">' +
+      '     <select name="dateFields.day" data-ng-model="dateFields.day" placeholder="Day" class="form-control" ng-options="day for day in days" ng-change="checkDate()" ng-disabled="disableFields">' +
+      '       <option value="" disabled selected>-day-</option>' +
+      '     </select>' +
       '  </div>' +
-      '  <div class="form-group col-xs-4">' +
-      '    <select ng-show="!yearText" name="dateFields.year" data-ng-model="dateFields.year" placeholder="Year" class="form-control" ng-options="year for year in years" ng-change="checkDate(); checkMonth()" ng-disabled="disableFields"></select>' +
+      '  <div class="_dtc select-year">' +
+      '    <select ng-show="!yearText" name="dateFields.year" data-ng-model="dateFields.year" placeholder="Year" class="form-control" ng-options="year for year in years" ng-change="checkDate(); checkMonth()" ng-disabled="disableFields">' +
+      '     <option value="" disabled selected>-year-</option>' +
+      '    </select>' +
       '    <input ng-show="yearText" type="text" name="dateFields.year" data-ng-model="dateFields.year" placeholder="Year" class="form-control" ng-disabled="disableFields">' +
       '  </div>' +
       '</div>',
