@@ -81,16 +81,16 @@
 
         $scope.dateFields = {};
 
-        $scope.dateFields.day = new Date($scope.model).getUTCDate();
-        $scope.dateFields.month = new Date($scope.model).getUTCMonth();
-        $scope.dateFields.year = new Date($scope.model).getUTCFullYear();
+        $scope.dateFields.day = new Date($scope.model).getDate();
+        $scope.dateFields.month = new Date($scope.model).getMonth();
+        $scope.dateFields.year = new Date($scope.model).getFullYear();
 
         // Initialize with current date (if set)
         $scope.$watch('model', function (newDate) {
           if(newDate) {
-            $scope.dateFields.day = new Date(newDate).getUTCDate();
-            $scope.dateFields.month = new Date(newDate).getUTCMonth();
-            $scope.dateFields.year = new Date(newDate).getUTCFullYear();
+            $scope.dateFields.day = new Date(newDate).getDate();
+            $scope.dateFields.month = new Date(newDate).getMonth();
+            $scope.dateFields.year = new Date(newDate).getFullYear();
           }
         });
 
