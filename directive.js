@@ -4,22 +4,23 @@
   var dd = angular.module('rorymadden.date-dropdowns', []);
 
   dd.factory('rsmdateutils', function () {
-    var that = this,
-        dayRange = [1, 31],
-        months = [
-          'January',
-          'February',
-          'March',
-          'April',
-          'May',
-          'June',
-          'July',
-          'August',
-          'September',
-          'October',
-          'November',
-          'December'
-        ];
+    function RsmDate() {
+      this.dayRange = [1, 31];
+      this.months = [
+        'January',
+        'February',
+        'March',
+        'April',
+        'May',
+        'June',
+        'July',
+        'August',
+        'September',
+        'October',
+        'November',
+        'December'
+      ];
+    }
 
     function changeDate (date) {
       if(date.day > 28) {
@@ -30,41 +31,51 @@
         date.month--;
         return date;
       }
-    };
+    }
 
-    return {
+    RsmDate.prototype = {
       checkDate: function (date) {
         var d;
         if (!date.day || date.month === null || date.month === undefined || !date.year) return false;
 
         d = new Date(Date.UTC(date.year, date.month, date.day));
-        
+
         if (d && (d.getMonth() === date.month && d.getDate() === Number(date.day))) {
           return d;
         }
 
         return this.checkDate(changeDate(date));
       },
-      days: (function () {
-        var days = [];
-        while (dayRange[0] <= dayRange[1]) {
-          days.push(dayRange[0]++);
+      checkMonth: function (date) {
+        if (!angular.isNumber(date.month)) {
+          return false;
+        }
+
+        this.dayRange[1] = (new Date(date.year || (new Date()).getYear(), date.month + 1, 0)).getDate();
+      },
+      getDays: function () {
+        var days = [],
+            start = this.dayRange[0];
+        while (start <= this.dayRange[1]) {
+          days.push(start++);
         }
         return days;
-      }()),
-      months: (function () {
+      },
+      getMonths: function () {
         var lst = [],
-            mLen = months.length;
+            mLen = this.months.length;
 
         for (var i = 0; i < mLen; i++) {
           lst.push({
             value: i,
-            name: months[i]
+            name: this.months[i]
           });
         }
         return lst;
-      }())
+      }
     };
+
+    return new RsmDate();
   })
 
   dd.directive('rsmdatedropdowns', ['rsmdateutils', function (rsmdateutils) {
@@ -73,11 +84,13 @@
       replace: true,
       require: 'ngModel',
       scope: {
-        model: '=ngModel'
+        model: '=ngModel',
+        change: '&ngChange'
       },
       controller: ['$scope', 'rsmdateutils', function ($scope, rsmDateUtils) {
-        $scope.days = rsmDateUtils.days;
-        $scope.months = rsmDateUtils.months;
+
+        $scope.days = rsmDateUtils.getDays();
+        $scope.months = rsmDateUtils.getMonths();
 
         $scope.dateFields = {};
 
@@ -99,21 +112,33 @@
           if (date) {
             $scope.model = date;
           }
+          $scope.change({value : date});
+        };
+
+        $scope.checkMonth = function () {
+          rsmDateUtils.checkMonth($scope.dateFields);
+          $scope.days = rsmDateUtils.getDays();
         };
       }],
       template:
-      '<div class="form-inline">' +
-      '  <div class="form-group col-xs-3">' +
-      '     <select name="dateFields.day" data-ng-model="dateFields.day" placeholder="Day" class="form-control" ng-options="day for day in days" ng-change="checkDate()" ng-disabled="disableFields"></select>' +
-      '  </div>' +
-      '  <div class="form-group col-xs-5">' +
-      '    <select name="dateFields.month" data-ng-model="dateFields.month" placeholder="Month" class="form-control" ng-options="month.value as month.name for month in months" value="{{ dateField.month }}" ng-change="checkDate()" ng-disabled="disableFields"></select>' +
-      '  </div>' +
-      '  <div class="form-group col-xs-4">' +
-      '    <select ng-show="!yearText" name="dateFields.year" data-ng-model="dateFields.year" placeholder="Year" class="form-control" ng-options="year for year in years" ng-change="checkDate()" ng-disabled="disableFields"></select>' +
-      '    <input ng-show="yearText" type="text" name="dateFields.year" data-ng-model="dateFields.year" placeholder="Year" class="form-control" ng-disabled="disableFields">' +
-      '  </div>' +
-      '</div>',
+        '<div class="_dtr">' +
+        '  <div class="_dtc select-month">' +
+        '   <select name="dateFields.month" data-ng-model="dateFields.month" placeholder="Month" class="form-control" ng-options="month.value as month.name for month in months" value="{{ dateField.month }}" ng-change="checkDate(); checkMonth()" ng-disabled="disableFields" required>' +
+        '     <option value="" disabled selected>-month-</option>' +
+        '   </select>' +
+        '  </div>' +
+        '  <div class="_dtc select-day">' +
+        '     <select name="dateFields.day" data-ng-model="dateFields.day" placeholder="Day" class="form-control" ng-options="day for day in days" ng-change="checkDate()" ng-disabled="disableFields" required>' +
+        '       <option value="" disabled selected>-day-</option>' +
+        '     </select>' +
+        '  </div>' +
+        '  <div class="_dtc select-year">' +
+        '    <select ng-show="!yearText" name="dateFields.year" data-ng-model="dateFields.year" placeholder="Year" class="form-control" ng-options="year for year in years" ng-change="checkDate(); checkMonth()" ng-disabled="disableFields" required>' +
+        '     <option value="" disabled selected>-year-</option>' +
+        '    </select>' +
+        '    <input ng-show="yearText" type="text" name="dateFields.year" data-ng-model="dateFields.year" placeholder="Year" class="form-control" ng-disabled="disableFields">' +
+        '  </div>' +
+        '</div>',
       link: function (scope, element, attrs, ctrl) {
         var currentYear = parseInt(attrs.startingYear, 10) || new Date().getFullYear(),
             numYears = parseInt(attrs.numYears,10) || 100,
