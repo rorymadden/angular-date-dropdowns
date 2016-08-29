@@ -84,10 +84,11 @@
       replace: true,
       require: 'ngModel',
       scope: {
-        model: '=ngModel'
+        model: '=ngModel',
+        change: '&ngChange'
       },
       controller: ['$scope', 'rsmdateutils', function ($scope, rsmDateUtils) {
-        console.log(rsmDateUtils);
+
         $scope.days = rsmDateUtils.getDays();
         $scope.months = rsmDateUtils.getMonths();
 
@@ -111,6 +112,7 @@
           if (date) {
             $scope.model = date;
           }
+          $scope.change({value : date});
         };
 
         $scope.checkMonth = function () {
@@ -119,24 +121,24 @@
         };
       }],
       template:
-      '<div class="_dtr">' +
-      '  <div class="_dtc select-month">' +
-      '   <select name="dateFields.month" data-ng-model="dateFields.month" placeholder="Month" class="form-control" ng-options="month.value as month.name for month in months" value="{{ dateField.month }}" ng-change="checkDate(); checkMonth()" ng-disabled="disableFields">' +
-      '     <option value="" disabled selected>-month-</option>' +
-      '   </select>' +
-      '  </div>' +
-      '  <div class="_dtc select-day">' +
-      '     <select name="dateFields.day" data-ng-model="dateFields.day" placeholder="Day" class="form-control" ng-options="day for day in days" ng-change="checkDate()" ng-disabled="disableFields">' +
-      '       <option value="" disabled selected>-day-</option>' +
-      '     </select>' +
-      '  </div>' +
-      '  <div class="_dtc select-year">' +
-      '    <select ng-show="!yearText" name="dateFields.year" data-ng-model="dateFields.year" placeholder="Year" class="form-control" ng-options="year for year in years" ng-change="checkDate(); checkMonth()" ng-disabled="disableFields">' +
-      '     <option value="" disabled selected>-year-</option>' +
-      '    </select>' +
-      '    <input ng-show="yearText" type="text" name="dateFields.year" data-ng-model="dateFields.year" placeholder="Year" class="form-control" ng-disabled="disableFields">' +
-      '  </div>' +
-      '</div>',
+        '<div class="_dtr">' +
+        '  <div class="_dtc select-month">' +
+        '   <select name="dateFields.month" data-ng-model="dateFields.month" placeholder="Month" class="form-control" ng-options="month.value as month.name for month in months" value="{{ dateField.month }}" ng-change="checkDate(); checkMonth()" ng-disabled="disableFields" required>' +
+        '     <option value="" disabled selected>-month-</option>' +
+        '   </select>' +
+        '  </div>' +
+        '  <div class="_dtc select-day">' +
+        '     <select name="dateFields.day" data-ng-model="dateFields.day" placeholder="Day" class="form-control" ng-options="day for day in days" ng-change="checkDate()" ng-disabled="disableFields" required>' +
+        '       <option value="" disabled selected>-day-</option>' +
+        '     </select>' +
+        '  </div>' +
+        '  <div class="_dtc select-year">' +
+        '    <select ng-show="!yearText" name="dateFields.year" data-ng-model="dateFields.year" placeholder="Year" class="form-control" ng-options="year for year in years" ng-change="checkDate(); checkMonth()" ng-disabled="disableFields" required>' +
+        '     <option value="" disabled selected>-year-</option>' +
+        '    </select>' +
+        '    <input ng-show="yearText" type="text" name="dateFields.year" data-ng-model="dateFields.year" placeholder="Year" class="form-control" ng-disabled="disableFields">' +
+        '  </div>' +
+        '</div>',
       link: function (scope, element, attrs, ctrl) {
         var currentYear = parseInt(attrs.startingYear, 10) || new Date().getFullYear(),
             numYears = parseInt(attrs.numYears,10) || 100,
