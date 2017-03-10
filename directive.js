@@ -38,7 +38,7 @@
         if (!date.day || date.month === null || date.month === undefined || !date.year) return false;
 
         d = new Date(Date.UTC(date.year, date.month, date.day));
-        
+
         if (d && (d.getMonth() === date.month && d.getDate() === Number(date.day))) {
           return d;
         }
@@ -59,7 +59,7 @@
         for (var i = 0; i < mLen; i++) {
           lst.push({
             value: i,
-            name: months[i]
+            name: moment().month(i).format("MMMM")
           });
         }
         return lst;
